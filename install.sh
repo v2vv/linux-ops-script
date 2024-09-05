@@ -114,6 +114,9 @@ semaphore_composefile_path='semaphore/docker-compose.yaml'
 uptimekuma_composefile_path='uptime-kuma/docker-compose.yaml'
 uptimekuma_database_path='uptime-kuma/kuma.db'
 
+openwrt_rootf_path='/media/U盘/rootf.tar.gz'
+
+
 
 check_sysem(){
     # 检查系统环境
@@ -310,6 +313,12 @@ uptime_kuma_restore(){
     # download "$localPath/$uptimekuma_composefile_path" "$(urlencode $oneDriveBackupFolder)/$uptimekuma_composefile_path"
     echo "开始运行 semaphore 容器"
     docker_run $localPath/$uptimekuma_composefile_path
+}
+
+openwrt_restore(){
+    docker import $openwrt_rootf_path openwrt_rootf
+    docker run -itd --name=openwrt_rootf --restart=always --network=macnet --privileged=true -v /var/run/docker.sock:/root/docker.sock openwrt /sbin/init
+    docker exec -it /bin/sh "sed -i 's/192.168.2.2/192.168.1.15/' /etc/config/network && /etc/init.d/network restart && ifconfig"
 }
 
 restore(){
