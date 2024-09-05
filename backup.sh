@@ -6,6 +6,9 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # 切换工作目录为脚本所在目录
 cd "$SCRIPT_DIR"
 
+# 加载配置 source ./config.sh
+. ./config.sh
+
 # 默认值
 verbose=0
 file=""
@@ -100,22 +103,6 @@ NC='\033[0m' # 恢复默认颜色
 # oneDriveBackupFolder=$5
 # option=$6
 
-localPath="$HOME/data"
-oneDriveBackupFolder="文档/backup"
-
-alist_config_Path='alist/config.json'
-alist_data_path='alist/data.db'
-alist_composefile_path='alist/docker-compose.yaml'
-
-ddnsgo_config_path='ddns-go/.ddns_go_config.yaml'
-ddnsgo_composefile_path='ddns-go/docker-compose.yaml'
-
-semaphore_config_path='semaphore/config.json'
-semaphore_database_path='semaphore/database.boltdb'
-semaphore_composefile_path='semaphore/docker-compose.yaml'
-
-uptimekuma_composefile_path='uptime-kuma/docker-compose.yaml'
-uptimekuma_database_path='uptime-kuma/kuma.db'
 
 
 # echo $client_id
