@@ -16,23 +16,7 @@ source ./comFunc.sh
 verbose=0
 file=""
 
-# 显示帮助信息
-show_help() {
-    echo "Usage: $0 [-o option] [-e client_id,client_secret,tenant_id,option]"
-    echo ""
-    echo "  -o  选择备份软件"
-    echo "      1 - alist"
-    echo "      2 - ddns-go"
-    echo "      3 - semaphore"
-    echo "      4 - uptime-kuma"
-    echo "      5 - all"
-    echo "      6 - auto"
-    echo ""
-    echo "  -e  提供 OneDrive 备份的详细信息，用逗号分隔"
-    echo "      client_id,client_secret,tenant_id,localPath,oneDriveBackupFolder,option"
-    echo ""
-    echo "  -h  显示此帮助信息"
-}
+
 
 while getopts ":o:e:h" opt; do
     case ${opt} in
@@ -75,17 +59,19 @@ while getopts ":o:e:h" opt; do
             IFS=',' read -r client_id client_secret tenant_id option <<< "$OPTARG"
             ;;
         h )
-            show_help
+            show_backup_help
             exit 0
             ;;
-        \? ) # 未知选项
+        \? )
+             # 未知选项
             echo "Invalid option: -$OPTARG" >&2
-            show_help
+            show_backup_help
             exit 1
             ;;
-        : ) # 缺少参数
+        : ) 
+            # 缺少参数
             echo "Option -$OPTARG requires an argument." >&2
-            show_help
+            show_backup_help
             exit 1
             ;;
     esac
@@ -102,8 +88,6 @@ shift $((OPTIND -1))
 # echo $client_id
 # echo $client_secret
 # echo $tenant_id
-
-
 
 
 

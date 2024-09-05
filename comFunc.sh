@@ -162,7 +162,23 @@ urlencode() {
 
 
 
-
+# 显示备份帮助信息
+show_backup_help() {
+    echo "Usage: $0 [-o option] [-e client_id,client_secret,tenant_id,option]"
+    echo ""
+    echo "  -o  选择备份软件"
+    echo "      1 - alist"
+    echo "      2 - ddns-go"
+    echo "      3 - semaphore"
+    echo "      4 - uptime-kuma"
+    echo "      5 - all"
+    echo "      6 - auto"
+    echo ""
+    echo "  -e  提供 OneDrive 备份的详细信息，用逗号分隔"
+    echo "      client_id,client_secret,tenant_id,localPath,oneDriveBackupFolder,option"
+    echo ""
+    echo "  -h  显示此帮助信息"
+}
 
 
 # $1 软件名称
@@ -224,6 +240,27 @@ uptime_kuma_backup(){
         echo -e "${YELLOW}$1 Backup File does not exist.${NC}"
     fi
 }
+
+
+
+
+# 显示安装帮助信息
+show_install_help() {
+    echo "Usage: $0 [-o option] [-e client_id,client_secret,tenant_id,backup_soft_name]"
+    echo ""
+    echo "  -o  选择备份软件"
+    echo "      1 - alist"
+    echo "      2 - ddns-go"
+    echo "      3 - semaphore"
+    echo "      4 - uptime-kuma"
+    echo "      5 - all"
+    echo ""
+    echo "  -e  提供 OneDrive 备份的详细信息，用逗号分隔"
+    echo "      client_id,client_secret,tenant_id,backup_soft_name"
+    echo ""
+    echo "  -h  显示此帮助信息"
+}
+
 
 
 alist_restore(){
