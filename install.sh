@@ -9,6 +9,9 @@ cd "$SCRIPT_DIR"
 # 加载配置 source ./config.sh
 . ./config.sh
 
+# 加载函数
+source ./comFunc.sh
+
 # 默认值
 verbose=0
 file=""
