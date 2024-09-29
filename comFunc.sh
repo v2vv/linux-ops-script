@@ -270,6 +270,10 @@ xui_backup(){
     fi
 }
 
+
+
+
+
 # 显示安装帮助信息
 show_install_help() {
     echo "Usage: $0 [-o option] [-e client_id,client_secret,tenant_id,backup_soft_name]"
@@ -289,6 +293,8 @@ show_install_help() {
     echo ""
     echo "  -h  显示此帮助信息"
 }
+
+
 
 
 
@@ -349,7 +355,7 @@ openwrt_restore(){
 }
 
 xui_restore(){
-    stoprunning xui
+    stoprunning 3xui
     mkdir -p 3xui
     download "$localPath/$xui_database_path" "$(urlencode $oneDriveBackupFolder)/$xui_database_path"
     download "$localPath/$xui_publickey_path" "$(urlencode $oneDriveBackupFolder)/$xui_publickey_path"
