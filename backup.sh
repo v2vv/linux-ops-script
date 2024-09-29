@@ -47,7 +47,7 @@ while getopts ":o:e:h" opt; do
                 6)
                     option="uptime-kuma"
                     ;;
-                67)
+                7)
                     option="xui"
                     ;;
                 

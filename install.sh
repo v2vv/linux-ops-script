@@ -99,7 +99,6 @@ restore(){
         "xui")
             xui_restore
             ;;
-
         "all")
             alist_restore
             ddns_go_restore
