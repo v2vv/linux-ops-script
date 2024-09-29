@@ -30,22 +30,25 @@ while getopts ":o:e:h" opt; do
             fi
             case $OPTARG in
                 1)
-                    option="alist"
-                    ;;
-                2)
-                    option="ddns-go"
-                    ;;
-                3)
-                    option="semaphore"
-                    ;;
-                4)
-                    option="uptime-kuma"
-                    ;;
-                5)
                     option="all"
                     ;;
-                6)
+                2)
                     option="auto"
+                    ;;
+                3)
+                    option="alist"
+                    ;;
+                4)
+                    option="ddns-go"
+                    ;;
+                5)
+                    option="semaphore"
+                    ;;
+                6)
+                    option="uptime-kuma"
+                    ;;
+                67)
+                    option="xui"
                     ;;
                 
                 *)
@@ -115,11 +118,15 @@ backup(){
         "uptime-kuma")
             uptime_kuma_backup "uptime-kuma"
             ;;
+        "xui")
+            xui_backup "xui"
+            ;;
         "all")
             alist_backup "alist"
             ddns_go_backup "ddns-go"
             semaphore_backup "semaphore"
             uptime_kuma_backup "uptime-kuma"
+            xui_backup "xui"
             ;;
         "auto")
             auto_backup

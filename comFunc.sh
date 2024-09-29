@@ -171,8 +171,9 @@ show_backup_help() {
     echo "      2 - ddns-go"
     echo "      3 - semaphore"
     echo "      4 - uptime-kuma"
-    echo "      5 - all"
-    echo "      6 - auto"
+    echo "      5 - xui"
+    echo "      6 - all"
+    echo "      7 - auto"
     echo ""
     echo "  -e  提供 OneDrive 备份的详细信息，用逗号分隔"
     echo "      client_id,client_secret,tenant_id,localPath,oneDriveBackupFolder,option"
@@ -242,7 +243,19 @@ uptime_kuma_backup(){
 }
 
 
-
+# $1 软件名称
+xui_backup(){
+    # 上传 xui
+    if [[ -e $localPath/$xui_composefile_path ]]; then
+        echo "$1 Backup File exists."
+        upload $localPath/$xui_composefile_path $(urlencode $oneDriveBackupFolder)/$xui_composefile_path
+        upload $localPath/$xui_privkeykey_path $(urlencode $oneDriveBackupFolder)/$xui_privkeykey_path
+        upload $localPath/$xui_publickey_path $(urlencode $oneDriveBackupFolder)/$xui_publickey_path
+        upload $localPath/$xui_database_path $(urlencode $oneDriveBackupFolder)/$xui_database_path
+    else
+        echo -e "${YELLOW}$1 Backup File does not exist.${NC}"
+    fi
+}
 
 # 显示安装帮助信息
 show_install_help() {
@@ -253,7 +266,8 @@ show_install_help() {
     echo "      2 - ddns-go"
     echo "      3 - semaphore"
     echo "      4 - uptime-kuma"
-    echo "      5 - all"
+    echo "      5 - xui"
+    echo "      6 - all"
     echo ""
     echo "  -e  提供 OneDrive 备份的详细信息，用逗号分隔"
     echo "      client_id,client_secret,tenant_id,backup_soft_name"
@@ -318,3 +332,15 @@ openwrt_restore(){
     docker run -itd --name=openwrt_rootf --restart=always --network=macnet --privileged=true -v /var/run/docker.sock:/root/docker.sock openwrt /sbin/init
     docker exec -it /bin/sh "sed -i 's/192.168.2.2/192.168.1.15/' /etc/config/network && /etc/init.d/network restart && ifconfig"
 }
+
+xui_restore(){
+    stoprunning xui
+    mkdir -p xui
+    download "$localPath/$xui_database_path" "$(urlencode $oneDriveBackupFolder)/$xui_database_path"
+    download "$localPath/$xui_publickey_path" "$(urlencode $oneDriveBackupFolder)/$xui_publickey_path"
+    download "$localPath/$xui_privkeykey_path" "$(urlencode $oneDriveBackupFolder)/$xui_privkeykey_path"
+    download "$localPath/$xui_composefile_path" "$(urlencode $oneDriveBackupFolder)/$xui_composefile_path"
+    echo "开始运行 xui 容器"
+    docker_run $localPath/$xui_composefile_path
+}
+

@@ -142,8 +142,6 @@ check_soft_env(){
     fi
 }
 
-
-
 # $1 password
 sshcommand(){
     local host=$1

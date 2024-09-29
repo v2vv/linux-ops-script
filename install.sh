@@ -29,22 +29,25 @@ while getopts ":o:e:h" opt; do
             fi
             case $OPTARG in
                 1)
-                    backup_soft_name="alist"
-                    ;;
-                2)
-                    backup_soft_name="ddns-go"
-                    ;;
-                3)
-                    backup_soft_name="semaphore"
-                    ;;
-                4)
-                    backup_soft_name="uptime-kuma"
-                    ;;
-                5)
                     backup_soft_name="all"
                     ;;
-                6)
+                2)
                     backup_soft_name="auto"
+                    ;;
+                3)
+                    backup_soft_name="alist"
+                    ;;
+                4)
+                    backup_soft_name="ddns-go"
+                    ;;
+                5)
+                    backup_soft_name="semaphore"
+                    ;;
+                6)
+                    backup_soft_name="uptime-kuma"
+                    ;;
+                7)
+                    backup_soft_name="xui"
                     ;;
                 *)
                     echo "无效的备份软件名称: $OPTARG" >&2
@@ -93,11 +96,16 @@ restore(){
         "uptime-kuma")
             uptime_kuma_restore
             ;;
+        "xui")
+            xui_restore
+            ;;
+
         "all")
             alist_restore
             ddns_go_restore
             semaphore_restore
             uptime_kuma_restore
+            xui_restore
             ;;
         *)
             echo "未匹配到任何恢复数据名"

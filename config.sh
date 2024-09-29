@@ -22,4 +22,11 @@ semaphore_composefile_path='semaphore/docker-compose.yaml'
 uptimekuma_composefile_path='uptime-kuma/docker-compose.yaml'
 uptimekuma_database_path='uptime-kuma/kuma.db'
 
+xui_database_path="3xui/x-ui.db"
+xui_publickey_path="3xui/fullchain.pem"
+xui_privkeykey_path="3xui/privkey.pem"
+xui_composefile_path="3xui/docker-compose.yaml"
+
+
 openwrt_rootf_path='/media/U盘/rootf.tar.gz'
+
