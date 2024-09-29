@@ -25,6 +25,19 @@ check_soft_env(){
             exit 1
         fi
     fi
+
+        # 检查是否存在 xxd 命令
+    if command -v jq >/dev/null 2>&1; then
+        echo "jq 工具已安装"
+    else
+        if [ "$system_env" = "Linux" ]; then
+            echo "安装 jq"
+            apt install jq -y
+        else
+            echo "jq 工具未安装"
+            exit 1
+        fi
+    fi
 }
 
 auth(){
