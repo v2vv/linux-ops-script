@@ -350,7 +350,7 @@ openwrt_restore(){
 
 xui_restore(){
     stoprunning xui
-    mkdir -p xui
+    mkdir -p 3xui
     download "$localPath/$xui_database_path" "$(urlencode $oneDriveBackupFolder)/$xui_database_path"
     download "$localPath/$xui_publickey_path" "$(urlencode $oneDriveBackupFolder)/$xui_publickey_path"
     download "$localPath/$xui_privkeykey_path" "$(urlencode $oneDriveBackupFolder)/$xui_privkeykey_path"
