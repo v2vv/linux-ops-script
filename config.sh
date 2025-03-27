@@ -29,4 +29,5 @@ xui_composefile_path='3xui/docker-compose.yaml'
 
 
 openwrt_rootf_path='/media/U盘/rootf.tar.gz'
-
+openwrt_backup_dir='/etc/openclash'
+openwrt_config_file_backup='openclash'
