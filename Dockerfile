@@ -1,25 +1,20 @@
-# 使用Ubuntu作为基础镜像
-FROM ubuntu:latest
-
-# 设置维护者信息（可选）
-LABEL maintainer="Eric <eric@example.com>"
-
-# 更新包管理器并安装必要的软件
-RUN apt-get update && apt-get install -y \
-    curl \
-    vim \
-    git \
-    && apt-get clean
+# 使用官方 Node.js 镜像作为基础镜像
+FROM node:16-alpine
 
 # 设置工作目录
 WORKDIR /app
 
-# 复制应用程序文件到容器中（替换为你的文件路径）
-COPY . /app
+# 将 package.json 和 package-lock.json 复制到工作目录
+COPY package*.json ./
 
-# 暴露端口（可根据实际应用调整）
-EXPOSE 8080
+# 安装依赖
+RUN npm install
 
-# 指定容器启动时的命令（可根据实际应用调整）
-CMD ["bash"]
+# 将应用的所有代码复制到工作目录
+COPY . .
 
+# 暴露容器的端口
+EXPOSE 3000
+
+# 启动 Node.js 应用
+CMD ["node", "index.js"]
