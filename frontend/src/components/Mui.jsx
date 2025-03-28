@@ -1,5 +1,22 @@
-import React, { useState } from "react";
-import { AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemText, CssBaseline, Box, IconButton, Grid, Paper, Button } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  CssBaseline,
+  Box,
+  IconButton,
+  Grid,
+  Paper,
+  Button,
+  TextField,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
 const drawerWidth = 240;
@@ -8,8 +25,61 @@ export default function SidebarLayout() {
   const [open, setOpen] = useState(true);
   const [selectedPage, setSelectedPage] = useState("首页");
 
+  // 读取存储的 API 地址列表
+  const [apiList, setApiList] = useState(() => {
+    const savedList = localStorage.getItem("apiList");
+    return savedList ? JSON.parse(savedList) : ["http://localhost:3000"];
+  });
+
+  // 读取当前选中的 API 地址
+  const [backendUrl, setBackendUrl] = useState(() => {
+    return localStorage.getItem("backendUrl") || "http://localhost:3000";
+  });
+
+  // 监听 `backendUrl` 变化并保存
+  useEffect(() => {
+    localStorage.setItem("backendUrl", backendUrl);
+  }, [backendUrl]);
+
+  // 监听 `apiList` 变化并保存
+  useEffect(() => {
+    localStorage.setItem("apiList", JSON.stringify(apiList));
+  }, [apiList]);
+
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  // 发送命令到后端
+  const handleModule1Action1 = () => {
+    fetch(`${backendUrl}/run-command`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ command: "echo Hello from server" }),
+    })
+      .then((res) => res.json())
+      .then((data) => alert("后端返回: " + data.stdout))
+      .catch((err) => alert("请求失败: " + err.message));
+  };
+
+  // 添加新的 API 地址
+  const [newApi, setNewApi] = useState("");
+  const handleAddApi = () => {
+    if (newApi && !apiList.includes(newApi)) {
+      setApiList([...apiList, newApi]);
+      setNewApi("");
+    }
+  };
+
+  // 删除 API 地址
+  const handleRemoveApi = (url) => {
+    const updatedList = apiList.filter((api) => api !== url);
+    setApiList(updatedList);
+
+    // 如果删除的是当前使用的 API，则切换到列表第一个
+    if (backendUrl === url && updatedList.length > 0) {
+      setBackendUrl(updatedList[0]);
+    }
   };
 
   const getPageContent = (page) => {
@@ -20,7 +90,11 @@ export default function SidebarLayout() {
             <Grid item xs={2} sm={2} key={index}>
               <Paper sx={{ height: 250, width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", p: 2 }}>
                 <Typography variant="h6">{module}</Typography>
-                <Button variant="contained" sx={{ mt: 2 }}>操作 1</Button>
+                {module === "模块 1" && (
+                  <Button variant="contained" sx={{ mt: 2 }} onClick={handleModule1Action1}>
+                    操作 1
+                  </Button>
+                )}
                 <Button variant="outlined" sx={{ mt: 1 }}>操作 2</Button>
               </Paper>
             </Grid>
@@ -29,20 +103,58 @@ export default function SidebarLayout() {
       );
     }
 
-    switch (page) {
-      case "关于":
-        return "关于页面：这里提供应用的详细信息。";
-      case "设置":
-        return "设置页面：您可以在这里自定义应用配置。";
-      default:
-        return "请选择一个页面。";
+    if (page === "设置") {
+      return (
+        <Box sx={{ p: 2 }}>
+          <Typography variant="h6">设置</Typography>
+
+          {/* API 地址选择 */}
+          <Typography variant="body2" sx={{ mt: 2 }}>当前 API 地址：</Typography>
+          <Select
+            fullWidth
+            value={backendUrl}
+            onChange={(e) => setBackendUrl(e.target.value)}
+            sx={{ mt: 1 }}
+          >
+            {apiList.map((api, index) => (
+              <MenuItem key={index} value={api}>
+                {api}
+              </MenuItem>
+            ))}
+          </Select>
+
+          {/* 添加 API */}
+          <Typography variant="body2" sx={{ mt: 2 }}>添加 API 地址：</Typography>
+          <TextField
+            fullWidth
+            variant="outlined"
+            value={newApi}
+            onChange={(e) => setNewApi(e.target.value)}
+            placeholder="输入 API 地址"
+            sx={{ mt: 1 }}
+          />
+          <Button variant="contained" sx={{ mt: 1 }} onClick={handleAddApi}>
+            添加 API
+          </Button>
+
+          {/* API 地址列表 */}
+          <Typography variant="body2" sx={{ mt: 2 }}>API 地址列表：</Typography>
+          {apiList.map((api, index) => (
+            <Box key={index} sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
+              <Typography variant="body2">{api}</Typography>
+              <Button color="error" size="small" onClick={() => handleRemoveApi(api)}>删除</Button>
+            </Box>
+          ))}
+        </Box>
+      );
     }
+
+    return "请选择一个页面。";
   };
 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      {/* 侧边栏 */}
       <Drawer
         variant="persistent"
         open={open}
@@ -54,14 +166,13 @@ export default function SidebarLayout() {
       >
         <Toolbar />
         <List>
-          {["首页", "关于", "设置"].map((text) => (
+          {["首页", "设置"].map((text) => (
             <ListItem button key={text} onClick={() => setSelectedPage(text)}>
               <ListItemText primary={text} />
             </ListItem>
           ))}
         </List>
       </Drawer>
-      {/* 主体内容区域 */}
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <AppBar position="fixed" sx={{ width: `calc(100% - ${open ? drawerWidth : 0}px)`, ml: `${open ? drawerWidth : 0}px`, transition: "width 0.3s, margin-left 0.3s" }}>
           <Toolbar>
