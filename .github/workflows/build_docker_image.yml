@@ -46,9 +46,10 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
 
   build-fronted:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    permissions:
-      packages: write
 
     steps:
       - name: Checkout
@@ -67,7 +68,7 @@ jobs:
       - name: Build React app
         run: npm run build
         working-directory: ./frontend  # 设置工作目录为 frontend 文件夹
- 
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
@@ -80,6 +81,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          github_token: ${{ secrets.GH_TOKEN }}
     
