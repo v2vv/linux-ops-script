@@ -62,6 +62,19 @@ export default function SidebarLayout() {
       .catch((err) => alert("请求失败: " + err.message));
   };
 
+    // 发送命令到后端
+    const handleModule1Action2 = () => {
+      fetch(`${backendUrl}/run-command`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ command: "ls" }),
+      })
+        .then((res) => res.json())
+        .then((data) => alert("后端返回: " + data.stdout))
+        .catch((err) => alert("请求失败: " + err.message));
+    };
+  
+
   // 添加新的 API 地址
   const [newApi, setNewApi] = useState("");
   const handleAddApi = () => {
@@ -95,7 +108,9 @@ export default function SidebarLayout() {
                     操作 1
                   </Button>
                 )}
-                <Button variant="outlined" sx={{ mt: 1 }}>操作 2</Button>
+               <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
+                  操作 2
+                  </Button>
               </Paper>
             </Grid>
           ))}
