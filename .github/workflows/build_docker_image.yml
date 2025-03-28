@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
     paths:
       - 'backend/**'   # 监控文件夹及其子文件夹内的所有文件
+      - '.github/workflows/build_docker_image.yml' 
     tags: [ 'v*.*.*' ]
   workflow_dispatch:
 
