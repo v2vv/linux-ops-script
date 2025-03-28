@@ -121,6 +121,9 @@ backup(){
         "xui")
             xui_backup "xui"
             ;;
+        "openwrt")
+            openwrt_backup
+            ;;
         "all")
             alist_backup "alist"
             ddns_go_backup "ddns-go"
