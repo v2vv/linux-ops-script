@@ -270,7 +270,9 @@ xui_backup(){
     fi
 }
 
-
+openwrt_backup(){
+    
+}
 
 
 
