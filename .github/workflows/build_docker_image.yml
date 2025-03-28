@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
     tags: [ 'v*.*.*' ]
-
+  workflow_dispatch:
 env:
   REGISTRY: docker.io
   IMAGE_NAME: ${{ github.repository }}
