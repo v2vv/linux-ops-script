@@ -31,7 +31,7 @@ jobs:
       - name: Build ARM Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: {{defaultContext}}:backend
+          context: "{{defaultContext}}:backend"
           file: ./Dockerfile
           platforms: linux/arm  # 指定目标平台
           push: true
