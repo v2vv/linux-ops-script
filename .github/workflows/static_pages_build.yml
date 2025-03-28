@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'fronted/**'   # 监控文件夹及其子文件夹内的所有文件
+      - 'frontend/**'   # 监控文件夹及其子文件夹内的所有文件
       - '.github/workflows/static_pages_build.yml' 
     tags: [ 'v*.*.*' ]
   workflow_dispatch:

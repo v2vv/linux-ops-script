@@ -38,7 +38,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./backend           # 直接指定 backend 目录作为构建上下文
-          file: ./Dockerfile           # 使用根目录下的 Dockerfile
+          file: ./backend/Dockerfile           # 使用根目录下的 Dockerfile
           platforms: linux/arm64       # 目标平台设置为 ARM64
           push: true
           tags: |
