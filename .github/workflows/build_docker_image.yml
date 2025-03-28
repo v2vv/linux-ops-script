@@ -52,11 +52,14 @@ jobs:
         with:
           node-version: '16'  # 设置 Node.js 版本（可以根据项目要求调整）
 
+
       - name: Install dependencies
-        run: npm install  # 安装项目依赖
+        run: npm install
+        working-directory: ./frontend  # 设置工作目录为 frontend 文件夹
 
       - name: Build React app
-        run: npm run build  # 构建 React 应用
+        run: npm run build
+        working-directory: ./frontend  # 设置工作目录为 frontend 文件夹
  
       - name: Setup Pages
         uses: actions/configure-pages@v5
