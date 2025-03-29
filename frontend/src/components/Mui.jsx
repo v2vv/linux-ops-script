@@ -163,7 +163,7 @@ export default function SidebarLayout() {
         }}
       >
         {logs.length > 0 ? (
-          logs.map((log, index) => (
+          logs.slice().reverse().map((log, index) => (
             <React.Fragment key={index}>
               <ListItem>
                 <ListItemText
@@ -194,6 +194,7 @@ export default function SidebarLayout() {
             />
           </ListItem>
         )}
+
       </List>
     </Paper>
   );
@@ -222,6 +223,12 @@ export default function SidebarLayout() {
                       </Button>
                       <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
                         列出容器
+                      </Button>
+                      <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
+                        备份
+                      </Button>
+                      <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
+                        恢复备份
                       </Button>
                     </>
                   )}
