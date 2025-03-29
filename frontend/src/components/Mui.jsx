@@ -118,9 +118,9 @@ export default function SidebarLayout() {
 
   // 日志组件 - 提取为单独的组件以便在不同页面中复用
   const LogComponent = () => (
-    <Paper 
-      elevation={3} 
-      sx={{ 
+    <Paper
+      elevation={3}
+      sx={{
         width: "100%",
         height: "calc(100vh - 120px)",
         borderRadius: 1,
@@ -131,10 +131,10 @@ export default function SidebarLayout() {
         width: "30%"
       }}
     >
-      <Box 
-        sx={{ 
-          display: "flex", 
-          justifyContent: "space-between", 
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
           alignItems: "center",
           px: 2,
           py: 1,
@@ -145,19 +145,19 @@ export default function SidebarLayout() {
         }}
       >
         <Typography variant="h6">日志输出</Typography>
-        <IconButton 
-          size="small" 
+        <IconButton
+          size="small"
           onClick={clearLogs}
           sx={{ color: "primary.contrastText" }}
         >
           <DeleteIcon />
         </IconButton>
       </Box>
-      
-      <List 
-        sx={{ 
-          height: "calc(100% - 48px)", 
-          overflowY: "auto", 
+
+      <List
+        sx={{
+          height: "calc(100% - 48px)",
+          overflowY: "auto",
           p: 0,
           bgcolor: "background.paper"
         }}
@@ -166,7 +166,7 @@ export default function SidebarLayout() {
           logs.map((log, index) => (
             <React.Fragment key={index}>
               <ListItem>
-                <ListItemText 
+                <ListItemText
                   primary={log.message}
                   secondary={log.time}
                   primaryTypographyProps={{
@@ -184,8 +184,8 @@ export default function SidebarLayout() {
           ))
         ) : (
           <ListItem>
-            <ListItemText 
-              primary="暂无日志..." 
+            <ListItemText
+              primary="暂无日志..."
               primaryTypographyProps={{
                 variant: "body2",
                 color: "text.secondary",
@@ -203,31 +203,33 @@ export default function SidebarLayout() {
       return (
         <Box sx={{ pr: "33%" }}>
           <Grid container spacing={2}>
-            {["模块 1", "模块 2", "模块 3", "模块 4"].map((module, index) => (
+            {["Openwrt", "模块 2", "模块 3", "模块 4"].map((module, index) => (
               <Grid item xs={12} md={6} key={index}>
-                <Paper sx={{ 
-                  height: 250, 
-                  width: 200, 
-                  display: "flex", 
-                  flexDirection: "column", 
-                  justifyContent: "center", 
-                  alignItems: "center", 
+                <Paper sx={{
+                  height: 250,
+                  width: 200,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
                   p: 2
                 }}>
                   <Typography variant="h6">{module}</Typography>
-                  {module === "模块 1" && (
-                    <Button variant="contained" sx={{ mt: 2 }} onClick={handleModule1Action1}>
-                      操作 1
-                    </Button>
+                  {module === "Openwrt" && (
+                    <>
+                      <Button variant="contained" sx={{ mt: 2 }} onClick={handleModule1Action1}>
+                        测试连接
+                      </Button>
+                      <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
+                        列出容器
+                      </Button>
+                    </>
                   )}
-                  <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
-                    操作 2
-                  </Button>
                 </Paper>
               </Grid>
             ))}
           </Grid>
-          
+
           {/* 右侧固定的日志组件 */}
           <LogComponent />
         </Box>
@@ -276,7 +278,7 @@ export default function SidebarLayout() {
               <Button color="error" size="small" onClick={() => handleRemoveApi(api)}>删除</Button>
             </Box>
           ))}
-          
+
         </Box>
       );
     }
