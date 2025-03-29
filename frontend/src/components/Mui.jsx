@@ -2,27 +2,20 @@ import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
-  Typography,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
+  Button,
   CssBaseline,
   Box,
-  IconButton,
   Grid,
   Paper,
-  Button,
+  Typography,
   TextField,
   Select,
   MenuItem,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
 
 const drawerWidth = 240;
 
 export default function SidebarLayout() {
-  const [open, setOpen] = useState(true);
   const [selectedPage, setSelectedPage] = useState("首页");
 
   // 读取存储的 API 地址列表
@@ -46,10 +39,6 @@ export default function SidebarLayout() {
     localStorage.setItem("apiList", JSON.stringify(apiList));
   }, [apiList]);
 
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
-
   // 发送命令到后端
   const handleModule1Action1 = () => {
     fetch(`${backendUrl}/run-command`, {
@@ -60,37 +49,34 @@ export default function SidebarLayout() {
       .then((res) => res.json())
       .then((data) => {
         console.log("后端返回:", data);
-        alert("后端返回: " + data.stdout)
+        alert("后端返回: " + data.stdout);
       })
       .catch((err) => alert("请求失败: " + err.message));
   };
 
-    // 发送命令到后端
-    const handleModule1Action2 = () => {
-      fetch(`${backendUrl}/run-command`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ command: "docker ps" }),
+  // 发送命令到后端
+  const handleModule1Action2 = () => {
+    fetch(`${backendUrl}/run-command`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ command: "docker ps" }),
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const errorText = await res.json();
+          throw new Error(`服务器错误 ${res.status}: ${errorText.error}`);
+        }
+        return res.json();
       })
-        .then(async (res) => {
-          if (!res.ok) {
-            const errorText = await res.json();
-            // console.log(errorText);
-            throw new Error(`服务器错误 ${res.status}: ${errorText.error}`);
-          }
-          return res.json();
-        })
-        .then((data) => {
-          console.log("后端返回:", data);
-          alert("后端返回: " + data.stdout);
-        })
-        .catch((err) => {
-          console.error("请求失败:", err);
-          alert("请求失败: " + err.message);
-        });
-      
-    };
-  
+      .then((data) => {
+        console.log("后端返回:", data);
+        alert("后端返回: " + data.stdout);
+      })
+      .catch((err) => {
+        console.error("请求失败:", err);
+        alert("请求失败: " + err.message);
+      });
+  };
 
   // 添加新的 API 地址
   const [newApi, setNewApi] = useState("");
@@ -125,9 +111,9 @@ export default function SidebarLayout() {
                     操作 1
                   </Button>
                 )}
-               <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
+                <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
                   操作 2
-                  </Button>
+                </Button>
               </Paper>
             </Grid>
           ))}
@@ -187,36 +173,46 @@ export default function SidebarLayout() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <Drawer
-        variant="persistent"
-        open={open}
-        sx={{
-          width: open ? drawerWidth : 0,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: open ? drawerWidth : 0, boxSizing: "border-box", transition: "width 0.3s" },
-        }}
-      >
-        <Toolbar />
-        <List>
-          {["首页", "设置"].map((text) => (
-            <ListItem button key={text} onClick={() => setSelectedPage(text)}>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <AppBar position="fixed" sx={{ width: `calc(100% - ${open ? drawerWidth : 0}px)`, ml: `${open ? drawerWidth : 0}px`, transition: "width 0.3s, margin-left 0.3s" }}>
-          <Toolbar>
-            <IconButton color="inherit" edge="start" onClick={toggleDrawer} sx={{ mr: 2 }}>
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap>
-              {selectedPage}
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Toolbar />
+      <AppBar position="fixed">
+        <Toolbar>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Button
+              variant="outlined"
+              sx={{
+                backgroundColor: selectedPage === "首页" ? "linear-gradient(45deg, #FF8E53, #FF6F00)" : "transparent",
+                color: "white",  // Ensure color is always white
+                borderRadius: 2,
+                padding: "6px 12px",
+                fontWeight: "bold",
+                "&:hover": {
+                  backgroundColor: selectedPage === "首页" ? "linear-gradient(45deg, #FF6F00, #FF8E53)" : "rgba(0, 0, 0, 0.1)",
+                },
+              }}
+              onClick={() => setSelectedPage("首页")}
+            >
+              首页
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{
+                backgroundColor: selectedPage === "设置" ? "linear-gradient(45deg, #FF8E53, #FF6F00)" : "transparent",
+                color: "white",  // Ensure color is always white
+                ml: 2,
+                borderRadius: 2,
+                padding: "6px 12px",
+                fontWeight: "bold",
+                "&:hover": {
+                  backgroundColor: selectedPage === "设置" ? "linear-gradient(45deg, #FF6F00, #FF8E53)" : "rgba(0, 0, 0, 0.1)",
+                },
+              }}
+              onClick={() => setSelectedPage("设置")}
+            >
+              设置
+            </Button>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, pt: 10 }}>
         {getPageContent(selectedPage)}
       </Box>
     </Box>
