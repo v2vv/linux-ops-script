@@ -4,7 +4,7 @@
     "description": "A simple Node.js backend to execute commands via POST",
     "main": "index.js",
     "scripts": {
-      "start": "node mian.js"
+      "start": "node main.js"
     },
     "dependencies": {
       "express": "^4.18.2",

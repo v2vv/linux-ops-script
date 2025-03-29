@@ -11,12 +11,30 @@ import {
   TextField,
   Select,
   MenuItem,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  IconButton,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const drawerWidth = 240;
 
 export default function SidebarLayout() {
   const [selectedPage, setSelectedPage] = useState("首页");
+  const [logs, setLogs] = useState([]);
+
+  // 添加日志函数
+  const addLog = (message) => {
+    const timestamp = new Date().toLocaleTimeString();
+    setLogs(prevLogs => [...prevLogs, { time: timestamp, message: message }]);
+  };
+
+  // 清除日志
+  const clearLogs = () => {
+    setLogs([]);
+  };
 
   // 读取存储的 API 地址列表
   const [apiList, setApiList] = useState(() => {
@@ -49,9 +67,9 @@ export default function SidebarLayout() {
       .then((res) => res.json())
       .then((data) => {
         console.log("后端返回:", data);
-        alert("后端返回: " + data.stdout);
+        addLog("后端返回: " + data.stdout);
       })
-      .catch((err) => alert("请求失败: " + err.message));
+      .catch((err) => addLog("请求失败: " + err.message));
   };
 
   // 发送命令到后端
@@ -70,11 +88,11 @@ export default function SidebarLayout() {
       })
       .then((data) => {
         console.log("后端返回:", data);
-        alert("后端返回: " + data.stdout);
+        addLog("后端返回: " + data.stdout);
       })
       .catch((err) => {
         console.error("请求失败:", err);
-        alert("请求失败: " + err.message);
+        addLog("请求失败: " + err.message);
       });
   };
 
@@ -98,32 +116,127 @@ export default function SidebarLayout() {
     }
   };
 
+  // 日志组件 - 提取为单独的组件以便在不同页面中复用
+  const LogComponent = () => (
+    <Paper 
+      elevation={3} 
+      sx={{ 
+        width: "100%",
+        height: "calc(100vh - 120px)",
+        borderRadius: 1,
+        overflow: "hidden",
+        position: "fixed",
+        right: 24,
+        top: 88,
+        width: "30%"
+      }}
+    >
+      <Box 
+        sx={{ 
+          display: "flex", 
+          justifyContent: "space-between", 
+          alignItems: "center",
+          px: 2,
+          py: 1,
+          borderBottom: 1,
+          borderColor: "divider",
+          bgcolor: "primary.main",
+          color: "primary.contrastText"
+        }}
+      >
+        <Typography variant="h6">日志输出</Typography>
+        <IconButton 
+          size="small" 
+          onClick={clearLogs}
+          sx={{ color: "primary.contrastText" }}
+        >
+          <DeleteIcon />
+        </IconButton>
+      </Box>
+      
+      <List 
+        sx={{ 
+          height: "calc(100% - 48px)", 
+          overflowY: "auto", 
+          p: 0,
+          bgcolor: "background.paper"
+        }}
+      >
+        {logs.length > 0 ? (
+          logs.map((log, index) => (
+            <React.Fragment key={index}>
+              <ListItem>
+                <ListItemText 
+                  primary={log.message}
+                  secondary={log.time}
+                  primaryTypographyProps={{
+                    variant: "body2",
+                    fontFamily: "monospace"
+                  }}
+                  secondaryTypographyProps={{
+                    variant: "caption",
+                    color: "text.secondary"
+                  }}
+                />
+              </ListItem>
+              {index < logs.length - 1 && <Divider component="li" />}
+            </React.Fragment>
+          ))
+        ) : (
+          <ListItem>
+            <ListItemText 
+              primary="暂无日志..." 
+              primaryTypographyProps={{
+                variant: "body2",
+                color: "text.secondary",
+                fontStyle: "italic"
+              }}
+            />
+          </ListItem>
+        )}
+      </List>
+    </Paper>
+  );
+
   const getPageContent = (page) => {
     if (page === "首页") {
       return (
-        <Grid container spacing={2}>
-          {["模块 1", "模块 2", "模块 3", "模块 4"].map((module, index) => (
-            <Grid item xs={2} sm={2} key={index}>
-              <Paper sx={{ height: 250, width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", p: 2 }}>
-                <Typography variant="h6">{module}</Typography>
-                {module === "模块 1" && (
-                  <Button variant="contained" sx={{ mt: 2 }} onClick={handleModule1Action1}>
-                    操作 1
+        <Box sx={{ pr: "32%" }}>
+          <Grid container spacing={2}>
+            {["模块 1", "模块 2", "模块 3", "模块 4"].map((module, index) => (
+              <Grid item xs={12} md={6} key={index}>
+                <Paper sx={{ 
+                  height: 250, 
+                  width: "100%", 
+                  display: "flex", 
+                  flexDirection: "column", 
+                  justifyContent: "center", 
+                  alignItems: "center", 
+                  p: 2
+                }}>
+                  <Typography variant="h6">{module}</Typography>
+                  {module === "模块 1" && (
+                    <Button variant="contained" sx={{ mt: 2 }} onClick={handleModule1Action1}>
+                      操作 1
+                    </Button>
+                  )}
+                  <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
+                    操作 2
                   </Button>
-                )}
-                <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
-                  操作 2
-                </Button>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+          
+          {/* 右侧固定的日志组件 */}
+          <LogComponent />
+        </Box>
       );
     }
 
     if (page === "设置") {
       return (
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ pr: "32%" }}>
           <Typography variant="h6">设置</Typography>
 
           {/* API 地址选择 */}
@@ -163,6 +276,9 @@ export default function SidebarLayout() {
               <Button color="error" size="small" onClick={() => handleRemoveApi(api)}>删除</Button>
             </Box>
           ))}
+          
+          {/* 右侧固定的日志组件 */}
+          <LogComponent />
         </Box>
       );
     }
@@ -180,7 +296,7 @@ export default function SidebarLayout() {
               variant="outlined"
               sx={{
                 backgroundColor: selectedPage === "首页" ? "linear-gradient(45deg, #FF8E53, #FF6F00)" : "transparent",
-                color: "white",  // Ensure color is always white
+                color: "white",
                 borderRadius: 2,
                 padding: "6px 12px",
                 fontWeight: "bold",
@@ -196,7 +312,7 @@ export default function SidebarLayout() {
               variant="outlined"
               sx={{
                 backgroundColor: selectedPage === "设置" ? "linear-gradient(45deg, #FF8E53, #FF6F00)" : "transparent",
-                color: "white",  // Ensure color is always white
+                color: "white",
                 ml: 2,
                 borderRadius: 2,
                 padding: "6px 12px",
