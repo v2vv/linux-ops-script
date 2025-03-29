@@ -58,7 +58,10 @@ export default function SidebarLayout() {
       body: JSON.stringify({ command: "echo Hello from server" }),
     })
       .then((res) => res.json())
-      .then((data) => alert("后端返回: " + data.stdout))
+      .then((data) => {
+        console.log("后端返回:", data);
+        alert("后端返回: " + data.stdout)
+      })
       .catch((err) => alert("请求失败: " + err.message));
   };
 
@@ -69,9 +72,23 @@ export default function SidebarLayout() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ command: "docker ps" }),
       })
-        .then((res) => res.json())
-        .then((data) => alert("后端返回: " + data.stdout))
-        .catch((err) => alert("请求失败: " + err.message));
+        .then(async (res) => {
+          if (!res.ok) {
+            const errorText = await res.json();
+            // console.log(errorText);
+            throw new Error(`服务器错误 ${res.status}: ${errorText.error}`);
+          }
+          return res.json();
+        })
+        .then((data) => {
+          console.log("后端返回:", data);
+          alert("后端返回: " + data.stdout);
+        })
+        .catch((err) => {
+          console.error("请求失败:", err);
+          alert("请求失败: " + err.message);
+        });
+      
     };
   
 
