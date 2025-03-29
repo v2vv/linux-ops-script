@@ -201,13 +201,13 @@ export default function SidebarLayout() {
   const getPageContent = (page) => {
     if (page === "首页") {
       return (
-        <Box sx={{ pr: "32%" }}>
+        <Box sx={{ pr: "33%" }}>
           <Grid container spacing={2}>
             {["模块 1", "模块 2", "模块 3", "模块 4"].map((module, index) => (
               <Grid item xs={12} md={6} key={index}>
                 <Paper sx={{ 
                   height: 250, 
-                  width: "100%", 
+                  width: 200, 
                   display: "flex", 
                   flexDirection: "column", 
                   justifyContent: "center", 
