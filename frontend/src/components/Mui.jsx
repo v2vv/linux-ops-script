@@ -62,7 +62,7 @@ export default function SidebarLayout() {
     fetch(`${backendUrl}/run-command`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ command: "echo Hello from server" }),
+      body: JSON.stringify({ command: "echo 连接正常，主机正常" }),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -222,7 +222,7 @@ export default function SidebarLayout() {
                         查询状态
                       </Button>
                       <Button variant="contained" sx={{ mt: 1 }} onClick={handleModule1Action2}>
-                        重启
+                        重启容器
                       </Button>
                       <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
                         备份
@@ -234,6 +234,9 @@ export default function SidebarLayout() {
                   )}
                   {module === "主机" && (
                     <>
+                      <Button variant="contained" sx={{ mt: 1 }} onClick={handleModule1Action1}>
+                        查询状态
+                      </Button>
                       <Button variant="contained" sx={{ mt: 1 }} onClick={handleModule1Action1}>
                         查询容器
                       </Button>
