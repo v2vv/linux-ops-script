@@ -204,7 +204,7 @@ export default function SidebarLayout() {
       return (
         <Box sx={{ pr: "33%" }}>
           <Grid container spacing={2}>
-            {["Openwrt", "模块 2", "模块 3", "模块 4"].map((module, index) => (
+            {["主机", "Openwrt", "模块 3", "模块 4"].map((module, index) => (
               <Grid item xs={12} md={6} key={index}>
                 <Paper sx={{
                   height: 250,
@@ -218,17 +218,24 @@ export default function SidebarLayout() {
                   <Typography variant="h6">{module}</Typography>
                   {module === "Openwrt" && (
                     <>
-                      <Button variant="contained" sx={{ mt: 2 }} onClick={handleModule1Action1}>
-                        测试连接
+                      <Button variant="contained" sx={{ mt: 1 }} onClick={handleModule1Action1}>
+                        查询状态
                       </Button>
-                      <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
-                        列出容器
+                      <Button variant="contained" sx={{ mt: 1 }} onClick={handleModule1Action2}>
+                        重启
                       </Button>
                       <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
                         备份
                       </Button>
                       <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
                         恢复备份
+                      </Button>
+                    </>
+                  )}
+                  {module === "主机" && (
+                    <>
+                      <Button variant="contained" sx={{ mt: 1 }} onClick={handleModule1Action1}>
+                        查询容器
                       </Button>
                     </>
                   )}
