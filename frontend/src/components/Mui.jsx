@@ -277,8 +277,6 @@ export default function SidebarLayout() {
             </Box>
           ))}
           
-          {/* 右侧固定的日志组件 */}
-          <LogComponent />
         </Box>
       );
     }
