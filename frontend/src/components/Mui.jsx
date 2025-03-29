@@ -67,7 +67,7 @@ export default function SidebarLayout() {
       fetch(`${backendUrl}/run-command`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ command: "ls" }),
+        body: JSON.stringify({ command: "docker ps" }),
       })
         .then((res) => res.json())
         .then((data) => alert("后端返回: " + data.stdout))
