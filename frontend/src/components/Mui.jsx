@@ -120,14 +120,13 @@ export default function SidebarLayout() {
     <Paper
       elevation={3}
       sx={{
-        width: "100%",
+        width: "30%",
         height: "calc(100vh - 120px)",
         borderRadius: 1,
         overflow: "hidden",
         position: "fixed",
         right: 24,
         top: 88,
-        width: "30%",
       }}
     >
       <Box
