@@ -28,7 +28,7 @@ export default function SidebarLayout() {
   // 添加日志函数
   const addLog = (message) => {
     const timestamp = new Date().toLocaleTimeString();
-    setLogs(prevLogs => [...prevLogs, { time: timestamp, message: message }]);
+    setLogs((prevLogs) => [...prevLogs, { time: timestamp, message: message }]);
   };
 
   // 清除日志
@@ -57,27 +57,11 @@ export default function SidebarLayout() {
     localStorage.setItem("apiList", JSON.stringify(apiList));
   }, [apiList]);
 
-  // 发送命令到后端
-  const handleModule1Action1 = () => {
+  const fetchCommand = (command) => {
     fetch(`${backendUrl}/run-command`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ command: "echo 连接正常，主机正常" }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("后端返回:", data);
-        addLog("后端返回: " + data.stdout);
-      })
-      .catch((err) => addLog("请求失败: " + err.message));
-  };
-
-  // 发送命令到后端
-  const handleModule1Action2 = () => {
-    fetch(`${backendUrl}/run-command`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ command: "docker ps" }),
+      body: JSON.stringify({ command: `${command}` }),
     })
       .then(async (res) => {
         if (!res.ok) {
@@ -94,6 +78,21 @@ export default function SidebarLayout() {
         console.error("请求失败:", err);
         addLog("请求失败: " + err.message);
       });
+  };
+
+  // 发送命令到后端
+  const hostStatus = () => {
+    fetchCommand("echo 连接正常，主机正常");
+  };
+
+  // 发送命令到后端
+  const openwrtStatus = () => {
+    fetchCommand("docker ps");
+  };
+
+  // 发送命令到后端
+  const openwrtRestart = () => {
+    fetchCommand("docker restart openwrt");
   };
 
   // 添加新的 API 地址
@@ -128,7 +127,7 @@ export default function SidebarLayout() {
         position: "fixed",
         right: 24,
         top: 88,
-        width: "30%"
+        width: "30%",
       }}
     >
       <Box
@@ -141,7 +140,7 @@ export default function SidebarLayout() {
           borderBottom: 1,
           borderColor: "divider",
           bgcolor: "primary.main",
-          color: "primary.contrastText"
+          color: "primary.contrastText",
         }}
       >
         <Typography variant="h6">日志输出</Typography>
@@ -159,29 +158,32 @@ export default function SidebarLayout() {
           height: "calc(100% - 48px)",
           overflowY: "auto",
           p: 0,
-          bgcolor: "background.paper"
+          bgcolor: "background.paper",
         }}
       >
         {logs.length > 0 ? (
-          logs.slice().reverse().map((log, index) => (
-            <React.Fragment key={index}>
-              <ListItem>
-                <ListItemText
-                  primary={log.message}
-                  secondary={log.time}
-                  primaryTypographyProps={{
-                    variant: "body2",
-                    fontFamily: "monospace"
-                  }}
-                  secondaryTypographyProps={{
-                    variant: "caption",
-                    color: "text.secondary"
-                  }}
-                />
-              </ListItem>
-              {index < logs.length - 1 && <Divider component="li" />}
-            </React.Fragment>
-          ))
+          logs
+            .slice()
+            .reverse()
+            .map((log, index) => (
+              <React.Fragment key={index}>
+                <ListItem>
+                  <ListItemText
+                    primary={log.message}
+                    secondary={log.time}
+                    primaryTypographyProps={{
+                      variant: "body2",
+                      fontFamily: "monospace",
+                    }}
+                    secondaryTypographyProps={{
+                      variant: "caption",
+                      color: "text.secondary",
+                    }}
+                  />
+                </ListItem>
+                {index < logs.length - 1 && <Divider component="li" />}
+              </React.Fragment>
+            ))
         ) : (
           <ListItem>
             <ListItemText
@@ -189,12 +191,11 @@ export default function SidebarLayout() {
               primaryTypographyProps={{
                 variant: "body2",
                 color: "text.secondary",
-                fontStyle: "italic"
+                fontStyle: "italic",
               }}
             />
           </ListItem>
         )}
-
       </List>
     </Paper>
   );
@@ -206,38 +207,64 @@ export default function SidebarLayout() {
           <Grid container spacing={2}>
             {["主机", "Openwrt", "模块 3", "模块 4"].map((module, index) => (
               <Grid item xs={12} md={6} key={index}>
-                <Paper sx={{
-                  height: 250,
-                  width: 200,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  p: 2
-                }}>
+                <Paper
+                  sx={{
+                    height: 250,
+                    width: 200,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    p: 2,
+                  }}
+                >
                   <Typography variant="h6">{module}</Typography>
                   {module === "Openwrt" && (
                     <>
-                      <Button variant="contained" sx={{ mt: 1 }} onClick={handleModule1Action1}>
+                      <Button
+                        variant="contained"
+                        sx={{ mt: 1 }}
+                        onClick={openwrtStatus}
+                      >
                         查询状态
                       </Button>
-                      <Button variant="contained" sx={{ mt: 1 }} onClick={handleModule1Action2}>
+                      <Button
+                        variant="contained"
+                        sx={{ mt: 1 }}
+                        onClick={openwrtRestart}
+                      >
                         重启容器
                       </Button>
-                      <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
+                      <Button
+                        variant="outlined"
+                        sx={{ mt: 1 }}
+                        onClick={openwrtStatus}
+                      >
                         备份
                       </Button>
-                      <Button variant="outlined" sx={{ mt: 1 }} onClick={handleModule1Action2}>
+                      <Button
+                        variant="outlined"
+                        sx={{ mt: 1 }}
+                        onClick={openwrtStatus}
+                      >
                         恢复备份
                       </Button>
                     </>
                   )}
                   {module === "主机" && (
                     <>
-                      <Button variant="contained" sx={{ mt: 1 }} onClick={handleModule1Action1}>
+                      <Button
+                        variant="contained"
+                        sx={{ mt: 1 }}
+                        onClick={hostStatus}
+                      >
                         查询状态
                       </Button>
-                      <Button variant="contained" sx={{ mt: 1 }} onClick={handleModule1Action1}>
+                      <Button
+                        variant="contained"
+                        sx={{ mt: 1 }}
+                        onClick={hostStatus}
+                      >
                         查询容器
                       </Button>
                     </>
@@ -259,7 +286,9 @@ export default function SidebarLayout() {
           <Typography variant="h6">设置</Typography>
 
           {/* API 地址选择 */}
-          <Typography variant="body2" sx={{ mt: 2 }}>当前 API 地址：</Typography>
+          <Typography variant="body2" sx={{ mt: 2 }}>
+            当前 API 地址：
+          </Typography>
           <Select
             fullWidth
             value={backendUrl}
@@ -274,7 +303,9 @@ export default function SidebarLayout() {
           </Select>
 
           {/* 添加 API */}
-          <Typography variant="body2" sx={{ mt: 2 }}>添加 API 地址：</Typography>
+          <Typography variant="body2" sx={{ mt: 2 }}>
+            添加 API 地址：
+          </Typography>
           <TextField
             fullWidth
             variant="outlined"
@@ -288,14 +319,24 @@ export default function SidebarLayout() {
           </Button>
 
           {/* API 地址列表 */}
-          <Typography variant="body2" sx={{ mt: 2 }}>API 地址列表：</Typography>
+          <Typography variant="body2" sx={{ mt: 2 }}>
+            API 地址列表：
+          </Typography>
           {apiList.map((api, index) => (
-            <Box key={index} sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
+            <Box
+              key={index}
+              sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}
+            >
               <Typography variant="body2">{api}</Typography>
-              <Button color="error" size="small" onClick={() => handleRemoveApi(api)}>删除</Button>
+              <Button
+                color="error"
+                size="small"
+                onClick={() => handleRemoveApi(api)}
+              >
+                删除
+              </Button>
             </Box>
           ))}
-
         </Box>
       );
     }
@@ -312,13 +353,19 @@ export default function SidebarLayout() {
             <Button
               variant="outlined"
               sx={{
-                backgroundColor: selectedPage === "首页" ? "linear-gradient(45deg, #FF8E53, #FF6F00)" : "transparent",
+                backgroundColor:
+                  selectedPage === "首页"
+                    ? "linear-gradient(45deg, #FF8E53, #FF6F00)"
+                    : "transparent",
                 color: "white",
                 borderRadius: 2,
                 padding: "6px 12px",
                 fontWeight: "bold",
                 "&:hover": {
-                  backgroundColor: selectedPage === "首页" ? "linear-gradient(45deg, #FF6F00, #FF8E53)" : "rgba(0, 0, 0, 0.1)",
+                  backgroundColor:
+                    selectedPage === "首页"
+                      ? "linear-gradient(45deg, #FF6F00, #FF8E53)"
+                      : "rgba(0, 0, 0, 0.1)",
                 },
               }}
               onClick={() => setSelectedPage("首页")}
@@ -328,14 +375,20 @@ export default function SidebarLayout() {
             <Button
               variant="outlined"
               sx={{
-                backgroundColor: selectedPage === "设置" ? "linear-gradient(45deg, #FF8E53, #FF6F00)" : "transparent",
+                backgroundColor:
+                  selectedPage === "设置"
+                    ? "linear-gradient(45deg, #FF8E53, #FF6F00)"
+                    : "transparent",
                 color: "white",
                 ml: 2,
                 borderRadius: 2,
                 padding: "6px 12px",
                 fontWeight: "bold",
                 "&:hover": {
-                  backgroundColor: selectedPage === "设置" ? "linear-gradient(45deg, #FF6F00, #FF8E53)" : "rgba(0, 0, 0, 0.1)",
+                  backgroundColor:
+                    selectedPage === "设置"
+                      ? "linear-gradient(45deg, #FF6F00, #FF8E53)"
+                      : "rgba(0, 0, 0, 0.1)",
                 },
               }}
               onClick={() => setSelectedPage("设置")}

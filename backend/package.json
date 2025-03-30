@@ -1,17 +1,16 @@
 {
-    "name": "node-backend",
-    "version": "1.0.0",
-    "description": "A simple Node.js backend to execute commands via POST",
-    "main": "index.js",
-    "scripts": {
-      "start": "node main.js"
-    },
-    "dependencies": {
-      "express": "^4.18.2",
-      "cors": "^2.8.5"
-    },
-    "engines": {
-      "node": ">=14.0.0"
-    }
+  "name": "node-backend",
+  "version": "1.0.0",
+  "description": "A simple Node.js backend to execute commands via POST",
+  "main": "index.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
-  
+}
