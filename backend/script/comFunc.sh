@@ -271,7 +271,15 @@ xui_backup(){
 }
 
 openwrt_backup(){
-    
+    mkdir -p openwrt_backup_temp
+    IFS=' ' read -r -a arr <<< "$openwrt_config_file_backup"
+    for path in "${arr[@]}"; do
+        echo "正在复制 $path"
+        # 检查是否是文件路径，确保目标目录结构正确
+        docker cp "${openwrt_container_name}:${path}" "./openwrt_backup_temp${path}"
+    done
+    # 压缩备份文件
+    tar -czvf openwrt_backup.tar.gz -C ~/ openwrt_backup
 }
 
 

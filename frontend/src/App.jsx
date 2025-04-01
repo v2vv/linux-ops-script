@@ -1,15 +1,13 @@
-import { useState } from 'react'
+import { useState } from "react";
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
-import './App.css'
-import Mui from  './components/Mui'
+import "./App.css";
+import SidebarLayout from "./components/SidebarLayout";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
-  return (
-    <Mui></Mui>
-  )
+  return <SidebarLayout></SidebarLayout>;
 }
 
-export default App
+export default App;
