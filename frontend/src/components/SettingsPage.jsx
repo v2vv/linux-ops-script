@@ -6,27 +6,32 @@ import {
   MenuItem,
   TextField,
   Button,
+  Tabs,
+  Tab,
+  Paper,
 } from "@mui/material";
 
 const SettingsPage = ({ onUrlChange }) => {
-  // 从localStorage初始化状态
+  const [activeTab, setActiveTab] = useState(0);
   const [backendUrl, setBackendUrl] = useState(() => {
     return localStorage.getItem("backendUrl") || "http://localhost:3000";
   });
-
   const [apiList, setApiList] = useState(() => {
     const savedList = localStorage.getItem("apiList");
     return savedList ? JSON.parse(savedList) : ["http://localhost:3000"];
   });
-
   const [newApi, setNewApi] = useState("");
+  // 新增JSON编辑器状态
+  const [jsonInput, setJsonInput] = useState(() => {
+    const savedJson = localStorage.getItem("jsonData");
+    return savedJson || "";
+  });
+  const [jsonError, setJsonError] = useState("");
 
-  // 当backendUrl变化时通知父组件
   useEffect(() => {
     onUrlChange && onUrlChange(backendUrl);
   }, [backendUrl, onUrlChange]);
 
-  // 持久化状态到localStorage
   useEffect(() => {
     localStorage.setItem("backendUrl", backendUrl);
   }, [backendUrl]);
@@ -35,85 +40,196 @@ const SettingsPage = ({ onUrlChange }) => {
     localStorage.setItem("apiList", JSON.stringify(apiList));
   }, [apiList]);
 
-  // 添加新的API地址
+  // 新增JSON保存效果
+  useEffect(() => {
+    localStorage.setItem("jsonData", jsonInput);
+  }, [jsonInput]);
+
   const handleAddApi = () => {
     if (newApi && !apiList.includes(newApi)) {
       const updatedList = [...apiList, newApi];
       setApiList(updatedList);
       setNewApi("");
 
-      // 如果是第一个API，自动设置为当前backendUrl
       if (updatedList.length === 1) {
         setBackendUrl(newApi);
       }
     }
   };
 
-  // 删除API地址
   const handleRemoveApi = (url) => {
     const updatedList = apiList.filter((api) => api !== url);
     setApiList(updatedList);
 
-    // 如果删除的是当前使用的API，则切换到列表第一个
     if (backendUrl === url) {
       const newUrl = updatedList.length > 0 ? updatedList[0] : "";
       setBackendUrl(newUrl);
     }
   };
 
+  // 新增JSON处理函数
+  const handleJsonChange = (e) => {
+    const value = e.target.value;
+    setJsonInput(value);
+    try {
+      if (value) {
+        JSON.parse(value);
+      }
+      setJsonError("");
+    } catch (error) {
+      setJsonError("无效的JSON格式");
+    }
+  };
+
+  const handleFormatJson = () => {
+    try {
+      const parsed = JSON.parse(jsonInput);
+      setJsonInput(JSON.stringify(parsed, null, 2));
+      setJsonError("");
+    } catch (error) {
+      setJsonError("格式化失败: " + error.message);
+    }
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
+
   return (
-    <Box sx={{ pr: "32%" }}>
-      <Typography variant="h6">设置</Typography>
-
-      <Typography variant="body2" sx={{ mt: 2 }}>
-        当前 API 地址：
-      </Typography>
-      <Select
-        fullWidth
-        value={backendUrl}
-        onChange={(e) => setBackendUrl(e.target.value)}
-        sx={{ mt: 1 }}
+    <Box sx={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+      {/* 左侧 Tab 导航栏 */}
+      <Paper
+        sx={{
+          width: 200,
+          flexShrink: 0,
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          borderRight: 1,
+          borderColor: "divider",
+        }}
       >
-        {apiList.map((api, index) => (
-          <MenuItem key={index} value={api}>
-            {api}
-          </MenuItem>
-        ))}
-      </Select>
-
-      <Typography variant="body2" sx={{ mt: 2 }}>
-        添加 API 地址：
-      </Typography>
-      <TextField
-        fullWidth
-        variant="outlined"
-        value={newApi}
-        onChange={(e) => setNewApi(e.target.value)}
-        placeholder="输入 API 地址"
-        sx={{ mt: 1 }}
-      />
-      <Button variant="contained" sx={{ mt: 1 }} onClick={handleAddApi}>
-        添加 API
-      </Button>
-
-      <Typography variant="body2" sx={{ mt: 2 }}>
-        API 地址列表：
-      </Typography>
-      {apiList.map((api, index) => (
-        <Box
-          key={index}
-          sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}
+        <Tabs
+          orientation="vertical"
+          value={activeTab}
+          onChange={handleTabChange}
+          sx={{
+            flex: 1,
+            "& .MuiTabs-indicator": {
+              left: 0,
+              right: "auto",
+            },
+          }}
         >
-          <Typography variant="body2">{api}</Typography>
-          <Button
-            color="error"
-            size="small"
-            onClick={() => handleRemoveApi(api)}
-          >
-            删除
-          </Button>
-        </Box>
-      ))}
+          <Tab label="API 设置" sx={{ alignItems: "flex-start" }} />
+          <Tab label="JSON 编辑器" sx={{ alignItems: "flex-start" }} />
+        </Tabs>
+      </Paper>
+
+      {/* 右侧内容区域 */}
+      <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
+        {activeTab === 0 && (
+          <Box sx={{ maxWidth: "68%", mx: "auto" }}>
+            <Typography variant="h6">API 设置</Typography>
+
+            <Typography variant="body2" sx={{ mt: 2 }}>
+              当前 API 地址：
+            </Typography>
+            <Select
+              fullWidth
+              value={backendUrl}
+              onChange={(e) => setBackendUrl(e.target.value)}
+              sx={{ mt: 1 }}
+            >
+              {apiList.map((api, index) => (
+                <MenuItem key={index} value={api}>
+                  {api}
+                </MenuItem>
+              ))}
+            </Select>
+
+            <Typography variant="body2" sx={{ mt: 2 }}>
+              添加 API 地址：
+            </Typography>
+            <TextField
+              fullWidth
+              variant="outlined"
+              value={newApi}
+              onChange={(e) => setNewApi(e.target.value)}
+              placeholder="输入 API 地址"
+              sx={{ mt: 1 }}
+            />
+            <Button variant="contained" sx={{ mt: 1 }} onClick={handleAddApi}>
+              添加 API
+            </Button>
+
+            <Typography variant="body2" sx={{ mt: 2 }}>
+              API 地址列表：
+            </Typography>
+            {apiList.map((api, index) => (
+              <Box
+                key={index}
+                sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}
+              >
+                <Typography variant="body2">{api}</Typography>
+                <Button
+                  color="error"
+                  size="small"
+                  onClick={() => handleRemoveApi(api)}
+                >
+                  删除
+                </Button>
+              </Box>
+            ))}
+          </Box>
+        )}
+
+        {activeTab === 1 && (
+          <Box sx={{ maxWidth: "68%", mx: "auto" }}>
+            <Typography variant="h6">JSON 编辑器</Typography>
+            <Typography variant="body1" sx={{ mt: 2 }}>
+              在此编辑JSON数据，内容会自动保存到本地存储
+            </Typography>
+
+            <TextField
+              fullWidth
+              multiline
+              minRows={10}
+              maxRows={20}
+              variant="outlined"
+              value={jsonInput}
+              onChange={handleJsonChange}
+              placeholder='输入JSON数据，例如: {"key": "value"}'
+              sx={{ mt: 2 }}
+              error={!!jsonError}
+              helperText={jsonError || " "}
+            />
+
+            <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
+              <Button
+                variant="contained"
+                onClick={handleFormatJson}
+                disabled={!jsonInput}
+              >
+                格式化JSON
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={() => setJsonInput("")}
+                disabled={!jsonInput}
+              >
+                清空
+              </Button>
+            </Box>
+
+            {!jsonError && jsonInput && (
+              <Typography variant="body2" color="success.main" sx={{ mt: 1 }}>
+                JSON数据有效且已保存
+              </Typography>
+            )}
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 };
