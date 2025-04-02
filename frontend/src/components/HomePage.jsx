@@ -1,19 +1,33 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Grid, Paper, Typography, Button } from "@mui/material";
-import LogComponent from "./LogComponent"; // 确保路径正确
-
+import LogComponent from "./LogComponent";
 const HomePage = () => {
-  const [logs, setLogs] = React.useState([]);
+  const [logs, setLogs] = React.useState(() => {
+    const savedLogs = localStorage.getItem("appLogs");
+    return savedLogs ? JSON.parse(savedLogs) : [];
+  });
   const backendUrl = () =>
     localStorage.getItem("backendUrl") || "http://localhost:3000";
   const addLog = (message) => {
     const timestamp = new Date().toLocaleTimeString();
-    setLogs((prev) => [...prev, { time: timestamp, message }]);
+    const newLogs = [...logs, { time: timestamp, message }];
+    setLogs(newLogs);
+    localStorage.setItem("appLogs", JSON.stringify(newLogs));
   };
-
   const clearLogs = () => {
     setLogs([]);
+    localStorage.removeItem("appLogs");
   };
+  // 监听页面刷新或关闭事件，清空 localStorage
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      localStorage.removeItem("appLogs");
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   const fetchCommand = (command) => {
     fetch(`${backendUrl()}/run-command`, {
