@@ -5,16 +5,12 @@ import { AppBar, Toolbar, Button, CssBaseline, Box } from "@mui/material";
 
 const SidebarLayout = () => {
   const [selectedPage, setSelectedPage] = useState("首页");
-  const [backendUrl, setBackendUrl] = useState(() => {
-    return localStorage.getItem("backendUrl") || "http://localhost:3000";
-  });
-
   const getPageContent = (page) => {
     switch (page) {
       case "首页":
-        return <HomePage backendUrl={backendUrl} />;
+        return <HomePage />;
       case "设置":
-        return <SettingsPage onBackendUrlChange={setBackendUrl} />;
+        return <SettingsPage />;
       default:
         return <Typography variant="h6">请选择一个页面</Typography>;
     }

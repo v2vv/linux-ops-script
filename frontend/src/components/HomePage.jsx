@@ -2,9 +2,10 @@ import React from "react";
 import { Box, Grid, Paper, Typography, Button } from "@mui/material";
 import LogComponent from "./LogComponent"; // 确保路径正确
 
-const HomePage = ({ backendUrl }) => {
+const HomePage = () => {
   const [logs, setLogs] = React.useState([]);
-
+  const backendUrl = () =>
+    localStorage.getItem("backendUrl") || "http://localhost:3000";
   const addLog = (message) => {
     const timestamp = new Date().toLocaleTimeString();
     setLogs((prev) => [...prev, { time: timestamp, message }]);
@@ -15,7 +16,7 @@ const HomePage = ({ backendUrl }) => {
   };
 
   const fetchCommand = (command) => {
-    fetch(`${backendUrl}/run-command`, {
+    fetch(`${backendUrl()}/run-command`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ command: `${command}` }),
