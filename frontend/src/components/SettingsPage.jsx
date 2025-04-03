@@ -40,11 +40,6 @@ const SettingsPage = ({ onUrlChange }) => {
     localStorage.setItem("apiList", JSON.stringify(apiList));
   }, [apiList]);
 
-  // 新增JSON保存效果
-  useEffect(() => {
-    localStorage.setItem("jsonData", jsonInput);
-  }, [jsonInput]);
-
   const handleAddApi = () => {
     if (newApi && !apiList.includes(newApi)) {
       const updatedList = [...apiList, newApi];
@@ -188,7 +183,7 @@ const SettingsPage = ({ onUrlChange }) => {
           <Box sx={{ maxWidth: "68%", mx: "auto" }}>
             <Typography variant="h6">JSON 编辑器</Typography>
             <Typography variant="body1" sx={{ mt: 2 }}>
-              在此编辑JSON数据，内容会自动保存到本地存储
+              在此编辑JSON数据，点击保存按钮手动保存
             </Typography>
 
             <TextField
@@ -214,6 +209,22 @@ const SettingsPage = ({ onUrlChange }) => {
                 格式化JSON
               </Button>
               <Button
+                variant="contained"
+                color="success"
+                onClick={() => {
+                  try {
+                    const parsed = JSON.parse(jsonInput);
+                    localStorage.setItem("jsonData", JSON.stringify(parsed));
+                    alert("JSON数据已手动保存");
+                  } catch (error) {
+                    setJsonError("保存失败: 无效的JSON格式");
+                  }
+                }}
+                disabled={!jsonInput || !!jsonError}
+              >
+                保存
+              </Button>
+              <Button
                 variant="outlined"
                 onClick={() => setJsonInput("")}
                 disabled={!jsonInput}
@@ -224,7 +235,7 @@ const SettingsPage = ({ onUrlChange }) => {
 
             {!jsonError && jsonInput && (
               <Typography variant="body2" color="success.main" sx={{ mt: 1 }}>
-                JSON数据有效且已保存
+                JSON数据有效
               </Typography>
             )}
           </Box>
