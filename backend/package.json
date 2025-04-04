@@ -6,10 +6,6 @@
   "scripts": {
     "start": "node main.js",
     "upload": "node script/upload-to-onedrive.js",
-    "backup": "node script/openwrt-manager.js backup",
-    "backup:upload": "node script/openwrt-manager.js backup --upload",
-    "restore": "node script/openwrt-manager.js restore",
-    "upload:rootfs": "node script/openwrt-manager.js upload-rootfs",
     "backup:openclash": "node script/backup-openclash.js",
     "backup:openclash:upload": "node script/backup-openclash.js --upload"
   },
