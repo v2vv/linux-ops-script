@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node main.js",
     "upload": "node script/upload-to-onedrive.js",
-    "backup:openclash": "node script/backup-openclash.js --upload"
+    "backup:openclash": "node script/backup-openclash.js",
+    "restore:openclash": "node script/backup-openclash.js restore"
   },
   "keywords": [],
   "author": "",

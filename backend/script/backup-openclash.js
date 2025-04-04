@@ -14,7 +14,8 @@ const { ClientSecretCredential } = require('@azure/identity');
 const config = {
     containerName: 'openwrt',
     sourcePath: '/etc/openclash',
-    backupDir: path.join(__dirname, '..', 'backups')
+    backupDir: path.join(__dirname, '..', 'backups'),
+    tempDir: path.join(__dirname, '..', 'temp')
 };
 
 // 读取 OneDrive 配置
@@ -155,26 +156,109 @@ async function backupOpenClash() {
     }
 }
 
+// 从 OneDrive 下载文件
+async function downloadFromOneDrive(remotePath, localPath) {
+    try {
+        console.log('正在从 OneDrive 下载文件...');
+        console.log(`远程路径: ${remotePath}`);
+        console.log(`本地路径: ${localPath}`);
+
+        // 读取配置并获取客户端
+        const oneDriveConfig = await loadOneDriveConfig();
+        const client = await getAuthenticatedClient(oneDriveConfig);
+
+        // 确保目标目录存在
+        await fs.mkdir(path.dirname(localPath), { recursive: true });
+
+        // 下载文件
+        const response = await client.api(`/me/drive/root:/${remotePath}:/content`)
+            .get();
+
+        await fs.writeFile(localPath, Buffer.from(await response.arrayBuffer()));
+        console.log('文件下载完成');
+    } catch (error) {
+        throw new Error(`从 OneDrive 下载失败: ${error.message}`);
+    }
+}
+
+// 恢复 OpenClash 配置
+async function restoreOpenClash(backupFile) {
+    try {
+        // 检查容器
+        const containerExists = await checkContainer();
+        if (!containerExists) {
+            process.exit(1);
+        }
+
+        // 创建临时解压目录
+        const extractDir = path.join(config.tempDir, 'restore');
+        console.log('创建临时解压目录:', extractDir);
+        await fs.mkdir(extractDir, { recursive: true });
+
+        // 解压备份文件
+        console.log('正在解压备份文件...');
+        const tarCommand = `cd ${extractDir} && tar -xzf ${backupFile}`;
+        await runDockerCommand(tarCommand);
+
+        // 复制配置到容器
+        console.log('正在恢复配置到容器...');
+        const copyCommand = `docker cp ${extractDir}/. ${config.containerName}:${config.sourcePath}`;
+        await runDockerCommand(copyCommand);
+
+        // 重启 OpenClash 服务
+        console.log('正在重启 OpenClash 服务...');
+        const restartCommand = `docker exec ${config.containerName} /etc/init.d/openclash restart`;
+        await runDockerCommand(restartCommand);
+
+        // 清理临时文件
+        console.log('清理临时文件...');
+        await fs.rm(extractDir, { recursive: true, force: true });
+        await fs.unlink(backupFile);
+
+        console.log('恢复完成');
+    } catch (error) {
+        console.error('恢复失败:', error.message);
+        process.exit(1);
+    }
+}
+
 // 主函数
 async function main() {
     try {
-        console.log('开始备份 OpenClash 配置...');
-        const result = await backupOpenClash();
-        console.log('备份过程完成');
-        console.log('备份目录:', result.backupDir);
-        console.log('压缩文件:', result.tarFile);
-
-        // 直接上传到 OneDrive
-        console.log('准备上传到 OneDrive...');
-        const remotePath = `OpenWrt/openclash-backups/${result.fileName}`;
-        await uploadToOneDrive(result.tarFile, remotePath);
-
-        // 删除本地备份文件
-        console.log('清理本地备份文件...');
-        await fs.rm(result.backupDir, { recursive: true, force: true });
-        await fs.unlink(result.tarFile);
+        const command = process.argv[2];
         
-        console.log('所有操作完成');
+        if (command === 'restore') {
+            const backupName = process.argv[3];
+            if (!backupName) {
+                throw new Error('请提供要恢复的备份文件名');
+            }
+
+            // 下载并恢复备份
+            const remotePath = `OpenWrt/openclash-backups/${backupName}`;
+            const localPath = path.join(config.tempDir, backupName);
+            
+            await downloadFromOneDrive(remotePath, localPath);
+            await restoreOpenClash(localPath);
+        } else {
+            // 默认执行备份
+            console.log('开始备份 OpenClash 配置...');
+            const result = await backupOpenClash();
+            console.log('备份过程完成');
+            console.log('备份目录:', result.backupDir);
+            console.log('压缩文件:', result.tarFile);
+
+            // 直接上传到 OneDrive
+            console.log('准备上传到 OneDrive...');
+            const remotePath = `OpenWrt/openclash-backups/${result.fileName}`;
+            await uploadToOneDrive(result.tarFile, remotePath);
+
+            // 删除本地备份文件
+            console.log('清理本地备份文件...');
+            await fs.rm(result.backupDir, { recursive: true, force: true });
+            await fs.unlink(result.tarFile);
+            
+            console.log('所有操作完成');
+        }
     } catch (error) {
         console.error('程序执行失败:', error.message);
         process.exit(1);
