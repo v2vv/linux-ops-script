@@ -17,4 +17,4 @@ RUN npm install
 EXPOSE 3000
 
 # 启动 Node.js 应用
-CMD ["node", "index.js"]
+CMD ["node", "start"]
