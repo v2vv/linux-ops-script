@@ -62,6 +62,14 @@ const HomePage = () => {
     fetchCommand("docker restart openwrt");
   };
 
+  const openwrtBackup = () => {
+    fetchCommand("node openclash:backup ");
+  };
+
+  const openwrtRestore = () => {
+    fetchCommand("node openclash:restore ");
+  };
+
   return (
     <Box sx={{ pr: "33%" }}>
       <Grid container spacing={2}>
@@ -98,14 +106,14 @@ const HomePage = () => {
                   <Button
                     variant="outlined"
                     sx={{ mt: 1 }}
-                    onClick={openwrtStatus}
+                    onClick={openwrtBackup}
                   >
                     备份
                   </Button>
                   <Button
                     variant="outlined"
                     sx={{ mt: 1 }}
-                    onClick={openwrtStatus}
+                    onClick={openwrtRestore}
                   >
                     恢复备份
                   </Button>
