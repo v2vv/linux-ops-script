@@ -27,3 +27,4 @@ EXPOSE 3000
 
 # 启动 Node.js 应用
 CMD ["npm", "start"]
+  
