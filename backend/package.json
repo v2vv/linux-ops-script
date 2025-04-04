@@ -5,7 +5,6 @@
   "main": "main.js",
   "scripts": {
     "start": "node main.js",
-    "upload": "node script/upload-to-onedrive.js",
     "openclash:backup": "node script/openclash-manager.js",
     "openclash:restore": "node script/openclash-manager.js restore"
   },
