@@ -1,5 +1,5 @@
-# 使用官方 Node.js 镜像作为基础镜像
-FROM node:16-alpine
+# 使用 Node.js 18 镜像作为基础镜像
+FROM node:18-alpine
 
 # 安装必要的工具
 RUN apk add --no-cache \
