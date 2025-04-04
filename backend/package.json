@@ -1,14 +1,21 @@
 {
-  "name": "node-backend",
+  "name": "backend",
   "version": "1.0.0",
   "description": "A simple Node.js backend to execute commands via POST",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "start": "node main.js"
+    "start": "node main.js",
+    "upload": "node script/upload-to-onedrive.js"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "@azure/identity": "^3.3.2",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
+    "cors": "^2.8.5",
+    "express": "^4.18.3",
+    "isomorphic-fetch": "^3.0.0"
   },
   "engines": {
     "node": ">=14.0.0"
