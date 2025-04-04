@@ -2,3 +2,4 @@ host.json
 .env
 /.vscode
 /.idx
+backend.log
