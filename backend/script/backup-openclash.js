@@ -164,13 +164,17 @@ async function main() {
         console.log('备份目录:', result.backupDir);
         console.log('压缩文件:', result.tarFile);
 
-        // 检查是否需要上传到 OneDrive
-        const shouldUpload = process.argv.includes('--upload');
-        if (shouldUpload) {
-            console.log('准备上传到 OneDrive...');
-            const remotePath = `OpenWrt/openclash-backups/${result.fileName}`;
-            await uploadToOneDrive(result.tarFile, remotePath);
-        }
+        // 直接上传到 OneDrive
+        console.log('准备上传到 OneDrive...');
+        const remotePath = `OpenWrt/openclash-backups/${result.fileName}`;
+        await uploadToOneDrive(result.tarFile, remotePath);
+
+        // 删除本地备份文件
+        console.log('清理本地备份文件...');
+        await fs.rm(result.backupDir, { recursive: true, force: true });
+        await fs.unlink(result.tarFile);
+        
+        console.log('所有操作完成');
     } catch (error) {
         console.error('程序执行失败:', error.message);
         process.exit(1);
