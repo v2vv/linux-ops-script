@@ -7,7 +7,7 @@ const { ClientSecretCredential } = require('@azure/identity');
 // 读取配置文件
 async function loadConfig() {
     try {
-        const configPath = path.join(__dirname, '..', 'onedrive-config.json');
+        const configPath = path.join(__dirname, 'onedrive-config.json');
         const configData = await fs.readFile(configPath, 'utf8');
         return JSON.parse(configData);
     } catch (error) {
